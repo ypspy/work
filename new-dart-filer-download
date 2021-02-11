@@ -1,0 +1,41 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jan 13 23:58:43 2021
+
+New DART 접수 사이트에서 접수현황에 입력된 파일을 다운로드하는 코드.
+회사명 때문에 웹 페이지를 테블릿 화면으로 줄인 후 좌표를 찾아서 수정한다.
+마우스 움직임을 제어하기 때문에 다른 걸 못한다.
+
+"""
+
+import pyautogui
+import time
+
+def mouse_click(x, y):
+    pyautogui.moveTo(x, y)
+    pyautogui.click()
+    time.sleep(3)
+
+time.sleep(5)  # Set-up
+
+verticalCor = [567, 787, 997, 1215, 1427,
+               1639, 1859, 2069, 2288, 2503]
+horizontalCor1 = [-1792, -1758, -1730, -1693, -1650]
+horizontalCor2 = [-1805, -1754, -1710, -1664, -1614]
+horizontalCor3 = [-1826, -1757, -1696, -1632, -1578]
+
+count = 2
+
+while count != 361:
+    if count < 11:
+        horizontalCor = horizontalCor1
+    elif count < 101:
+        horizontalCor = horizontalCor2
+    else:
+        horizontalCor = horizontalCor3
+    
+    for i in horizontalCor:
+        mouse_click(i, 2625)
+        for j in verticalCor:
+            mouse_click(-2240, j)               
+        count += 1
