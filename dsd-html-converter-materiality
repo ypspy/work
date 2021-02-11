@@ -1,0 +1,91 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Aug 13 15:19:08 2020
+
+중요성 파일을 HTML로 변환하는 코드
+
+https://wotres.tistory.com/entry/python-%EC%97%90%EC%84%9C-SyntaxError-unicode-error-unicodeescape-codec-cant-decode-bytes-in-position-2-3-truncated-UXXXXXXXX-escape-%EC%97%90%EB%9F%AC-%ED%95%B4%EA%B2%B0%EB%B2%95
+
+"""
+import os
+import glob
+import pyautogui
+import time
+import xml.etree.ElementTree as ET
+import pandas as pd
+
+def mouse_click(x, y):
+    pyautogui.moveTo(x, y)
+    pyautogui.click()
+    time.sleep(0.5)
+
+# 1. 작업 폴더로 변경
+os.chdir("C:\\Users\\yoont\\Desktop\\업무\\1. 제도\\2. 설계\\11. 중요성과 외부감사실시내용 정보 입수 (21-01)\\1. 감사보고서 입수\\2019\\")  # 작업 폴더로 변경
+
+# 2. 타겟 폴더에 있는 필요 문서 경로 리스트업
+pathList = glob.glob('**/*.xml')
+pathListMateriality= glob.glob('**/*중요성*.dsd')
+
+pathInfo = []
+
+for path in pathList:
+    tree = ET.parse(path)
+    root = tree.getroot()
+    filer = root.find("CIK").get("registrant")
+    amend = root.find("REPORT").get("submit_type")
+    consolidated = root.find("REPORT").get("rpt-id")
+    if consolidated == "00760":
+        consolidated = "sep"
+    elif consolidated == "00761":
+        consolidated = "con"
+    else:
+        consolidated = ''
+    
+    info = path.split('\\')[0] + '_' + filer + '_' + consolidated + '_' + amend
+    pathInfo.append(info)
+
+resultPath = "C:\\Users\\yoont\\Desktop\\result\\"
+
+df = pd.DataFrame([x.split("_") for x in pathInfo])
+df["path"] = pathInfo
+df.columns = ['index', 'code', 'report', 'amend', 'resultname']
+
+df1 = pd.DataFrame([x.split("\\") for x in pathListMateriality])
+df1.columns = ['index', 'path']
+
+df_inner = pd.merge(df, df1, on='index', how='inner')
+
+for i in range(215, len(df_inner)):
+    
+    openPath = df_inner["index"][i] + '\\' + df_inner["path"][i]
+
+    os.startfile(openPath)
+    time.sleep(5)
+    
+    pyautogui.press('esc', presses=3)
+    time.sleep(1)
+    pyautogui.press('o')
+    time.sleep(1)
+    mouse_click(700, 20)
+    pyautogui.press('c')
+    time.sleep(1)
+    
+    pyautogui.press('alt')
+    time.sleep(1)
+    pyautogui.press('hangul')
+    time.sleep(1)
+    pyautogui.press('f')
+    time.sleep(1)
+    pyautogui.press('h')
+    time.sleep(1)
+    
+    pyautogui.write(df_inner["resultname"][i])
+    mouse_click(1270, 270)  # PATH 선택
+    pyautogui.write(resultPath)  # 지정된 경로 입력
+        
+    pyautogui.press('enter')  # Enter키 입력        
+    mouse_click(1560, 1060)  # 저장 버튼
+
+    mouse_click(50, 50)
+    pyautogui.press('x')
+    
