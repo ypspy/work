@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Aug 13 15:19:08 2020
+
+@author: user
+
+증권신고서 풀의 기업실사 파일 전부 병합
+
+"""
+
+from bs4 import BeautifulSoup
+import os
+import glob
+
+# 1. 작업 폴더로 변경
+os.chdir("C:\\Users\\yoont\\Desktop\\")  # 작업 폴더로 변경
+
+# 2. 타겟 폴더에 있는 필요 문서 경로 리스트업
+pathList = []
+for path in [".\C001_2021\\"]:
+    path = path + "*기업실사_기업실사*.*"  # 필요한 Keyword 입력
+    pathInProcess = glob.glob(path)
+    pathList= pathList + pathInProcess
+
+# 3. 입수 과정에서 중복입수되어 표시된 duplicated 표시 파일 제거
+pathList = [x for x in pathList if "duplicated" not in x]
+
+# 4. 연결감사보고서 첨부 문서 제거 (외부감사실시내용/사업보고서 optional)
+# pathList = [x for x in pathList if "연결감사보고서" not in x]
+
+# 5. '[정정]'이 포함된 문서 제거
+pathList = [x for x in pathList if "[정정]" not in x]
+
+# # Long data 입수 
+directory = r"C:\\Users\\yoont\\Desktop\\"
+workInProcess = directory + "wp.html"
+
+txtName = os.path.join(directory, workInProcess)
+result = open(txtName, 'w', encoding="utf-8")
+
+# progress = 0
+
+for file in pathList:
+
+    html = open(file, "r", encoding="utf-8")
+    soup = BeautifulSoup(html, "lxml")
+    html.close()
+    
+    for img in soup.select("img"):
+        img.extract()
+                      
+    for lines in soup.contents:
+        result.write(str(lines))
+                    
+result.close()
