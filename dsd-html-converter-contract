@@ -21,7 +21,7 @@ def mouse_click(x, y):
     time.sleep(0.5)
 
 # 1. 작업 폴더로 변경
-os.chdir("C:\\Users\\yoont\\Desktop\\업무\\1. 제도\\2. 설계\\5. 외감 계약리스트 (21-01)\\2. 계약체결보고\\2021\\")  # 작업 폴더로 변경o
+os.chdir(r"C:\Users\yoont\Desktop\업무\1. 제도\2. 설계\5. 외감 계약리스트 (21-01)\2. 계약체결보고\2021\입수 (2) 0432\\")  # 작업 폴더로 변경o
 
 # 2. 타겟 폴더에 있는 필요 문서 경로 리스트업
 pathList = glob.glob('**/*.dsd')
@@ -41,11 +41,11 @@ for path in pathList:
     mouse_click(50, 50)  # 파일
     mouse_click(200, 600)  # HTML로 저장 선택식
     pyautogui.write(path.split("\\")[0])
-    mouse_click(1270, 270)  # PATH 선택
+    mouse_click(1930, 490)  # PATH 선택
     pyautogui.write(resultPath)  # 지정된 경로 입력
         
     pyautogui.press('enter')  # Enter키 입력        
-    mouse_click(1560, 1060)  # 저장 버튼
+    mouse_click(2200, 1290)  # 저장 버튼
     # mouse_click(2510, 15)  # 다트 편집기 종료
     
     mouse_click(50, 50)
